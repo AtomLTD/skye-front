@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "mcp__figma-desktop__get_screenshot",
-      "Bash(npm run dev)"
+      "Bash(npm run dev)",
+      "Bash(tasklist)",
+      "Bash(findstr:*)",
+      "Bash(timeout:*)"
     ],
     "deny": [],
     "ask": []
