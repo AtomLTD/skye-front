@@ -26,13 +26,13 @@ export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
   };
 
   return (
-    <div className="border-t bg-background p-4">
+    <div className="bg-background p-4">
       <div className="flex gap-2 max-w-4xl mx-auto">
         <Input
           value={message}
           onChange={e => setMessage(e.target.value)}
           onKeyDown={handleKeyPress}
-          placeholder="Запрос к модели"
+          placeholder="Запрос"
           disabled={disabled}
           className="flex-1"
         />
@@ -40,7 +40,7 @@ export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
           onClick={handleSend}
           disabled={!message.trim() || disabled}
           size="icon"
-          className="bg-orange-500 hover:bg-orange-600 shrink-0"
+          className="bg-brand hover:bg-brand/90 shrink-0"
         >
           <Send className="h-4 w-4" />
         </Button>

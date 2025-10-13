@@ -92,9 +92,9 @@ function ChatPageContent() {
         </SidebarFooter>
       </Sidebar>
 
-      <main className="flex flex-1 flex-col">
+      <main className="flex flex-1 flex-col max-w-2xl mx-auto">
         {/* Header для мобильных */}
-        <div className="flex items-center gap-2 border-b p-3 md:hidden">
+        <div className="flex items-center gap-2 p-3 md:hidden">
           <Button variant="ghost" size="icon" onClick={toggleSidebar}>
             <Menu className="h-5 w-5" />
           </Button>
@@ -106,7 +106,7 @@ function ChatPageContent() {
         </div>
 
         {/* Desktop Header */}
-        <div className="hidden md:flex items-center gap-2 border-b p-3">
+        <div className="hidden md:flex items-center gap-2 p-3">
           <SidebarTrigger />
           <h2 className="text-lg font-semibold">
             {selectedChatId

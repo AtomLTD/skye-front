@@ -59,25 +59,14 @@ export function MessageList({ messages, loading }: MessageListProps) {
         >
           <div
             className={cn(
-              'max-w-[70%] rounded-2xl px-4 py-3',
+              'max-w-[70%] rounded-md px-4 py-2',
               message.role === 'user'
-                ? 'bg-orange-500 text-white'
+                ? 'bg-brand dark:text-black text-white'
                 : 'bg-muted'
             )}
           >
             <div className="text-sm whitespace-pre-wrap break-words">
               {message.content}
-            </div>
-            <div
-              className={cn(
-                'text-xs mt-1',
-                message.role === 'user' ? 'text-orange-100' : 'text-muted-foreground'
-              )}
-            >
-              {new Date(message.timestamp).toLocaleTimeString('ru-RU', {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
             </div>
           </div>
         </div>

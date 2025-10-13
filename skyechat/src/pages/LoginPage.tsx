@@ -31,7 +31,7 @@ export default function LoginPage() {
         <CardContent className="space-y-4">
           <Button
             onClick={handleYandexLogin}
-            className="w-full bg-[#fc3f1d] hover:bg-[#fc3f1d]/90"
+            className="w-full bg-brand hover:bg-brand/90"
             size="lg"
           >
             <CircleArrowOutUpLeft className="w-5 h-5" />

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Search, MoreVertical, Trash2, Edit2 } from 'lucide-react';
+import { Plus, Search, Trash2, Edit2 } from 'lucide-react';
 import { Chat } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,12 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
 import { cn } from '@/lib/utils';
 
 interface ChatListProps {
@@ -38,7 +44,6 @@ export function ChatList({
   const [editTitle, setEditTitle] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [chatToDelete, setChatToDelete] = useState<string | null>(null);
-  const [showMenu, setShowMenu] = useState<string | null>(null);
 
   const filteredChats = chats.filter(chat =>
     chat.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -52,7 +57,6 @@ export function ChatList({
   const handleRename = (chatId: string, currentTitle: string) => {
     setEditingChatId(chatId);
     setEditTitle(currentTitle);
-    setShowMenu(null);
   };
 
   const handleSaveRename = () => {
@@ -66,7 +70,6 @@ export function ChatList({
   const handleDeleteClick = (chatId: string) => {
     setChatToDelete(chatId);
     setShowDeleteDialog(true);
-    setShowMenu(null);
   };
 
   const handleConfirmDelete = () => {
@@ -78,35 +81,26 @@ export function ChatList({
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col p-3">
       {/* Кнопка создания нового чата */}
-      <div className="p-3">
+      <div className="flex gap-2 mb-6">
         <Button
           onClick={handleCreateChat}
-          className="w-full bg-orange-500 hover:bg-orange-600"
-          size="sm"
+          className="bg-brand hover:bg-brand/90"
         >
-          <Plus className="mr-2 h-4 w-4" />
-          Новый чат
+          <Plus/>
+          Чат
         </Button>
-      </div>
-
-      {/* Поиск */}
-      <div className="px-3 pb-3">
-        <div className="relative">
-          <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
             placeholder="Поиск..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="h-9 pl-8"
           />
-        </div>
       </div>
 
       {/* Список чатов */}
-      <div className="flex-1 overflow-y-auto px-3 space-y-1">
+      <div className="flex-1 overflow-y-auto space-y-1">
         {loading ? (
           <>
             {[...Array(5)].map((_, i) => (
@@ -119,76 +113,55 @@ export function ChatList({
           </div>
         ) : (
           filteredChats.map(chat => (
-            <div
-              key={chat.id}
-              className={cn(
-                'group relative flex items-center gap-2 rounded-lg p-3 hover:bg-accent cursor-pointer transition-colors',
-                selectedChatId === chat.id && 'bg-accent'
-              )}
-            >
-              <div
-                className="flex-1 overflow-hidden"
-                onClick={() => onSelectChat(chat.id)}
-              >
-                {editingChatId === chat.id ? (
-                  <Input
-                    value={editTitle}
-                    onChange={e => setEditTitle(e.target.value)}
-                    onBlur={handleSaveRename}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter') handleSaveRename();
-                      if (e.key === 'Escape') setEditingChatId(null);
-                    }}
-                    className="h-6 px-2 text-sm"
-                    autoFocus
-                  />
-                ) : (
-                  <>
-                    <div className="font-medium text-sm truncate">{chat.title}</div>
-                    {chat.lastMessage && (
-                      <div className="text-xs text-muted-foreground truncate">
-                        {chat.lastMessage}
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-
-              {editingChatId !== chat.id && (
-                <div className="relative">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={e => {
-                      e.stopPropagation();
-                      setShowMenu(showMenu === chat.id ? null : chat.id);
-                    }}
-                  >
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-
-                  {showMenu === chat.id && (
-                    <div className="absolute right-0 top-8 z-50 min-w-[140px] rounded-md border bg-popover p-1 shadow-md">
-                      <button
-                        className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent"
-                        onClick={() => handleRename(chat.id, chat.title)}
-                      >
-                        <Edit2 className="h-4 w-4" />
-                        Переименовать
-                      </button>
-                      <button
-                        className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-destructive hover:bg-accent"
-                        onClick={() => handleDeleteClick(chat.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        Удалить
-                      </button>
-                    </div>
+            <ContextMenu key={chat.id}>
+              <ContextMenuTrigger>
+                <div
+                  className={cn(
+                    'group relative flex items-center gap-2 rounded-lg p-3 hover:bg-accent cursor-pointer transition-colors',
+                    selectedChatId === chat.id && 'bg-accent'
                   )}
+                  onClick={() => onSelectChat(chat.id)}
+                >
+                  <div className="flex-1 overflow-hidden">
+                    {editingChatId === chat.id ? (
+                      <Input
+                        value={editTitle}
+                        onChange={e => setEditTitle(e.target.value)}
+                        onBlur={handleSaveRename}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') handleSaveRename();
+                          if (e.key === 'Escape') setEditingChatId(null);
+                        }}
+                        className="h-6 px-2 text-sm"
+                        autoFocus
+                      />
+                    ) : (
+                      <>
+                        <div className="font-medium text-sm truncate">{chat.title}</div>
+                        {chat.lastMessage && (
+                          <div className="text-xs text-muted-foreground truncate">
+                            {chat.lastMessage}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
                 </div>
-              )}
-            </div>
+              </ContextMenuTrigger>
+              <ContextMenuContent>
+                <ContextMenuItem onClick={() => handleRename(chat.id, chat.title)}>
+                  <Edit2 className="h-4 w-4" />
+                  Переименовать
+                </ContextMenuItem>
+                <ContextMenuItem
+                  variant="destructive"
+                  onClick={() => handleDeleteClick(chat.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Удалить
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
           ))
         )}
       </div>
