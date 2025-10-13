@@ -100,7 +100,7 @@ export function ChatList({
       </div>
 
       {/* Список чатов */}
-      <div className="flex-1 overflow-y-auto space-y-1">
+      <div className="flex-1 overflow-y-auto">
         {loading ? (
           <>
             {[...Array(5)].map((_, i) => (
@@ -117,7 +117,7 @@ export function ChatList({
               <ContextMenuTrigger>
                 <div
                   className={cn(
-                    'group relative flex items-center gap-2 rounded-lg p-3 hover:bg-accent cursor-pointer transition-colors',
+                    'group relative flex items-center gap-2 rounded-lg p-3 hover:bg-accent cursor-pointer transition-colors mb-2',
                     selectedChatId === chat.id && 'bg-accent'
                   )}
                   onClick={() => onSelectChat(chat.id)}
