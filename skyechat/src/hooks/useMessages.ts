@@ -23,32 +23,41 @@ export function useMessages(chatId: string | null) {
   }, [chatId]);
 
   const sendMessage = useCallback(
-    (content: string) => {
-      if (!chatId) return;
+    (content: string, targetChatId?: string) => {
+      const messagesChatId = targetChatId || chatId;
+      if (!messagesChatId) return;
 
       const userMessage: Message = {
         id: 'msg-' + Date.now(),
-        chatId,
+        chatId: messagesChatId,
         role: 'user',
         content,
         timestamp: Date.now(),
       };
 
       addMessage(userMessage);
-      setMessages(prev => [...prev, userMessage]);
+
+      // Обновляем messages только если это текущий чат
+      if (messagesChatId === chatId) {
+        setMessages(prev => [...prev, userMessage]);
+      }
 
       // Симуляция ответа ИИ
       setTimeout(() => {
         const aiMessage: Message = {
           id: 'msg-' + Date.now(),
-          chatId,
+          chatId: messagesChatId,
           role: 'assistant',
           content: 'Это демонстрационный ответ от Skye ИИ. В будущем здесь будет настоящий ответ модели!',
           timestamp: Date.now(),
         };
 
         addMessage(aiMessage);
-        setMessages(prev => [...prev, aiMessage]);
+
+        // Обновляем messages только если это текущий чат
+        if (messagesChatId === chatId) {
+          setMessages(prev => [...prev, aiMessage]);
+        }
       }, 1000);
     },
     [chatId]

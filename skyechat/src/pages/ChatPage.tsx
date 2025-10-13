@@ -61,8 +61,8 @@ function ChatPageContent() {
       // Создаем новый чат, если не выбран
       const newChat = createChat('Новый чат');
       setSelectedChatId(newChat.id);
-      // Отправка сообщения произойдет в следующем рендере
-      setTimeout(() => sendMessage(content), 100);
+      // Отправляем сообщение сразу в новый чат
+      sendMessage(content, newChat.id);
     } else {
       sendMessage(content);
     }
