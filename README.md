@@ -1,102 +1,75 @@
 # skye-front
 
-Фронтенд приложение для SkyeChat, построенное на React, TypeScript и Vite.
+Frontend application for SkyeChat, built with React, TypeScript, and Vite.
 
-## Требования
+## Requirements
 
-- Node.js 20 или выше
-- npm или bun
-- Docker (опционально, для контейнеризации)
+- Node.js 20 or higher
+- npm
+- Docker (optional, for containerization)
 
-## Установка и запуск
+## Installation and Running
 
-### Вариант 1: Использование npm
+### Using npm
 
-1. Перейдите в директорию проекта:
+1. Navigate to the project directory:
 ```bash
 cd skyechat
 ```
 
-2. Установите зависимости:
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-3. Запустите приложение в режиме разработки:
+3. Run the application in development mode:
 ```bash
 npm run dev
 ```
 
-Приложение будет доступно по адресу `http://localhost:5173`
+The application will be available at `http://localhost:5173`
 
-4. Для сборки production версии:
+4. To build the production version:
 ```bash
 npm run build
 ```
 
-5. Для предварительного просмотра production сборки:
+5. To preview the production build:
 ```bash
 npm run preview
 ```
 
-### Вариант 2: Использование bun
+### Using Docker
 
-1. Перейдите в директорию проекта:
+1. Navigate to the project directory:
 ```bash
 cd skyechat
 ```
 
-2. Установите зависимости:
-```bash
-bun install
-```
-
-3. Запустите приложение в режиме разработки:
-```bash
-bun run dev
-```
-
-4. Для сборки production версии:
-```bash
-bun run build
-```
-
-5. Для предварительного просмотра production сборки:
-```bash
-bun run preview
-```
-
-### Вариант 3: Использование Docker
-
-1. Перейдите в директорию проекта:
-```bash
-cd skyechat
-```
-
-2. Соберите Docker образ:
+2. Build the Docker image:
 ```bash
 docker build -t skyechat-front .
 ```
 
-3. Запустите контейнер:
+3. Run the container:
 ```bash
 docker run -p 80:80 skyechat-front
 ```
 
-Приложение будет доступно по адресу `http://localhost`
+The application will be available at `http://localhost`
 
-## Доступные скрипты
+## Available Scripts
 
-- `npm run dev` / `bun run dev` - запуск сервера разработки с hot-reload
-- `npm run build` / `bun run build` - сборка приложения для production
-- `npm run preview` / `bun run preview` - предварительный просмотр production сборки
-- `npm run lint` / `bun run lint` - проверка кода с помощью ESLint
+- `npm run dev` - start development server with hot-reload
+- `npm run build` - build the application for production
+- `npm run preview` - preview the production build
+- `npm run lint` - check code with ESLint
 
-## Технологический стек
+## Technology Stack
 
-- **React 19** - библиотека для построения пользовательского интерфейса
-- **TypeScript** - типизированный JavaScript
-- **Vite** - инструмент сборки и сервер разработки
-- **Tailwind CSS** - CSS фреймворк
-- **React Router** - маршрутизация
-- **Radix UI** - компоненты пользовательского интерфейса
+- **React 19** - library for building user interfaces
+- **TypeScript** - typed JavaScript
+- **Vite** - build tool and development server
+- **Tailwind CSS** - CSS framework
+- **React Router** - routing
+- **Radix UI** - user interface components
