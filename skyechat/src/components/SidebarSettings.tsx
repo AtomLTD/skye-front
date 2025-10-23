@@ -1,17 +1,15 @@
 import { Moon, Sun, LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/components/ui/theme-provider';
-import { removeUser } from '@/lib/storage';
+import { useAuth } from '@/hooks/useAuth';
 import { Separator } from '@/components/ui/separator';
 
 export function SidebarSettings() {
   const { theme, setTheme } = useTheme();
-  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    removeUser();
-    navigate('/');
+    logout();
   };
 
   const toggleTheme = () => {

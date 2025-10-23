@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { Menu } from 'lucide-react';
 import {
   Sidebar,
@@ -15,24 +14,16 @@ import { ChatList } from '@/components/ChatList';
 import { MessageList } from '@/components/MessageList';
 import { MessageInput } from '@/components/MessageInput';
 import { SidebarSettings } from '@/components/SidebarSettings';
+import { UserProfile } from '@/components/UserProfile';
+import { AuthGuard } from '@/components/AuthGuard';
 import { useChats } from '@/hooks/useChats';
 import { useMessages } from '@/hooks/useMessages';
-import { getUser } from '@/lib/storage';
 
 function ChatPageContent() {
-  const navigate = useNavigate();
   const { isMobile, toggleSidebar } = useSidebar();
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const { chats, loading: chatsLoading, createChat, renameChat, removeChat } = useChats();
   const { messages, loading: messagesLoading, sendMessage } = useMessages(selectedChatId);
-
-  useEffect(() => {
-    // Проверка авторизации
-    const user = getUser();
-    if (!user) {
-      navigate('/');
-    }
-  }, [navigate]);
 
   const handleCreateChat = (title: string) => {
     const newChat = createChat(title);
@@ -88,6 +79,7 @@ function ChatPageContent() {
           />
         </SidebarContent>
         <SidebarFooter>
+          <UserProfile />
           <SidebarSettings />
         </SidebarFooter>
       </Sidebar>
@@ -124,10 +116,12 @@ function ChatPageContent() {
 
 export default function ChatPage() {
   return (
-    <SidebarProvider defaultOpen={true}>
-      <div className="flex h-screen w-full">
-        <ChatPageContent />
-      </div>
-    </SidebarProvider>
+    <AuthGuard>
+      <SidebarProvider defaultOpen={true}>
+        <div className="flex h-screen w-full">
+          <ChatPageContent />
+        </div>
+      </SidebarProvider>
+    </AuthGuard>
   );
 }

@@ -4,20 +4,73 @@ const STORAGE_KEYS = {
   USER: 'skye-user',
   CHATS: 'skye-chats',
   MESSAGES: 'skye-messages',
+  TOKENS: 'skye-tokens',
 } as const;
+
+// Безопасное хранение токенов
+interface TokenStorage {
+  accessToken: string;
+  refreshToken?: string;
+  expiresAt: number;
+}
 
 // User storage
 export const saveUser = (user: User): void => {
-  localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+  // Сохраняем пользователя без токенов в основном хранилище
+  const { accessToken, refreshToken, expiresAt, ...userData } = user;
+  localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userData));
+  
+  // Токены сохраняем отдельно для безопасности
+  if (accessToken) {
+    const tokenData: TokenStorage = {
+      accessToken,
+      refreshToken,
+      expiresAt: expiresAt || 0,
+    };
+    localStorage.setItem(STORAGE_KEYS.TOKENS, JSON.stringify(tokenData));
+  }
 };
 
 export const getUser = (): User | null => {
-  const data = localStorage.getItem(STORAGE_KEYS.USER);
-  return data ? JSON.parse(data) : null;
+  const userData = localStorage.getItem(STORAGE_KEYS.USER);
+  const tokenData = localStorage.getItem(STORAGE_KEYS.TOKENS);
+  
+  if (!userData) return null;
+  
+  const user = JSON.parse(userData);
+  
+  if (tokenData) {
+    const tokens = JSON.parse(tokenData);
+    return {
+      ...user,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      expiresAt: tokens.expiresAt,
+    };
+  }
+  
+  return user;
 };
 
 export const removeUser = (): void => {
   localStorage.removeItem(STORAGE_KEYS.USER);
+  localStorage.removeItem(STORAGE_KEYS.TOKENS);
+};
+
+// Проверка валидности токена
+export const isTokenValid = (user: User): boolean => {
+  if (!user.expiresAt) return false;
+  return Date.now() < user.expiresAt;
+};
+
+// Обновление токенов
+export const updateUserTokens = (accessToken: string, refreshToken?: string, expiresAt?: number): void => {
+  const tokenData: TokenStorage = {
+    accessToken,
+    refreshToken,
+    expiresAt: expiresAt || 0,
+  };
+  localStorage.setItem(STORAGE_KEYS.TOKENS, JSON.stringify(tokenData));
 };
 
 // Chats storage
