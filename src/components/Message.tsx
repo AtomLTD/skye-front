@@ -10,7 +10,6 @@ interface MessageProps {
 }
 
 export function Message({ message, onRegenerate }: MessageProps) {
-  const [isHovered, setIsHovered] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -31,7 +30,6 @@ export function Message({ message, onRegenerate }: MessageProps) {
 
   const isUserMessage = message.role === 'user';
   const canRegenerate = !isUserMessage && !message.isStreaming && message.isComplete;
-  const canCopy = message.content.length > 0;
 
   return (
     <div
@@ -39,8 +37,6 @@ export function Message({ message, onRegenerate }: MessageProps) {
         'flex group',
         isUserMessage ? 'justify-end' : 'justify-start'
       )}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex flex-col max-w-[70%]">
         <div
@@ -75,7 +71,7 @@ export function Message({ message, onRegenerate }: MessageProps) {
         {/* Action buttons container - всегда занимает место */}
         <div 
           className={cn(
-            'flex gap-1 mt-2 h-7',
+            'flex gap-1 mt-2 h-7 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none',
             isUserMessage ? 'justify-end' : 'justify-start'
           )}
         >
@@ -84,10 +80,7 @@ export function Message({ message, onRegenerate }: MessageProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className={cn(
-                  'h-7 px-2 text-xs transition-all duration-300 ease-in-out',
-                  isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                )}
+                className="h-7 px-2 text-xs transition-all duration-300 ease-in-out opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none"
                 onClick={handleCopy}
               >
                 {isCopied ? (
@@ -106,10 +99,7 @@ export function Message({ message, onRegenerate }: MessageProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className={cn(
-                    'h-7 px-2 text-xs transition-all duration-300 ease-in-out',
-                    isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                  )}
+                  className="h-7 px-2 text-xs transition-all duration-300 ease-in-out opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none"
                   onClick={handleRegenerate}
                 >
                   <RefreshCw className="h-3 w-3 mr-1" />
