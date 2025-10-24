@@ -93,17 +93,17 @@ function ChatPageContent() {
           <h2 className="text-lg font-semibold">
             {selectedChatId
               ? chats.find(c => c.id === selectedChatId)?.title || 'Чат'
-              : 'Skye'}
+              : 'Новый чат'}
           </h2>
         </div>
 
         {/* Desktop Header */}
-        <div className="hidden md:flex items-center gap-2 p-3">
+        <div className="hidden md:flex items-center gap-2 p-3 bg-zinc-50 dark:bg-zinc-900 rounded-lg">
           <SidebarTrigger />
           <h2 className="text-lg font-semibold">
             {selectedChatId
               ? chats.find(c => c.id === selectedChatId)?.title || 'Чат'
-              : 'Skye'}
+              : 'Новый чат'}
           </h2>
         </div>
 
