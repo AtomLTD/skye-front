@@ -62,7 +62,7 @@ class TimewebAIService {
         messages: messages,
         stream: true,
         temperature: 1,
-        max_completion_tokens: 4000,
+        max_completion_tokens: 16000,
       };
 
       console.log('Streaming request:', { url: `${this.baseURL}/api/v1/cloud-ai/agents/${this.apiKey}/v1/chat/completions`, body: requestBody });
@@ -95,6 +95,7 @@ class TimewebAIService {
 
       const decoder = new TextDecoder();
       let buffer = '';
+      let finishReason: string | null = null;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -123,11 +124,24 @@ class TimewebAIService {
                 fullText += content;
                 onChunk?.(content);
               }
+
+              // Отслеживаем finish_reason
+              const currentFinishReason = data.choices?.[0]?.finish_reason;
+              if (currentFinishReason) {
+                finishReason = currentFinishReason;
+              }
             } catch (e) {
               console.error('Error parsing SSE data:', e, trimmedLine);
             }
           }
         }
+      }
+
+      // Проверяем, если ответ был обрезан по лимиту токенов
+      if (finishReason === 'length' && fullText.length === 0) {
+        const error = new Error('Модель не вернула ответ: все токены были использованы на внутренние рассуждения. Попробуйте упростить запрос.');
+        onError?.(error);
+        throw error;
       }
 
       onComplete?.(fullText);
