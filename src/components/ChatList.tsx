@@ -86,7 +86,7 @@ export function ChatList({
       <div className="flex gap-2 mb-6">
         <Button
           onClick={handleCreateChat}
-          className="bg-brand hover:bg-brand/90"
+          className="bg-brand text-white hover:bg-brand/90"
         >
           <Plus/>
           Чат

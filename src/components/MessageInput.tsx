@@ -28,23 +28,23 @@ export function MessageInput({ onSend, disabled = false, hasMessages = false }: 
 
   return (
     <div className={`bg-background p-4 ${hasMessages ? 'mt-auto' : 'p-0'}`}>
-      <div className="flex gap-2 max-w-4xl mx-auto relative">
+      <div className={`flex gap-2 mx-auto relative`}>
         <Textarea
           value={message}
           onChange={e => setMessage(e.target.value)}
           onKeyDown={handleKeyPress}
           placeholder="Введите сообщение..."
           disabled={disabled}
-          className="flex-1 resize-none"
-          rows={2}
+          className={`flex-1 resize-none ${hasMessages ? '' : 'min-h-[120px] min-w-[300px] text-lg'}`}
+          rows={hasMessages ? 2 : 4}
         />
         <Button
           onClick={handleSend}
           disabled={!message.trim() || disabled}
           size="icon"
-          className="bg-brand hover:bg-brand/90 shrink-0 absolute right-2 bottom-2"
+          className={`bg-brand text-white hover:bg-brand/90 shrink-0 absolute right-2 bottom-2`}
         >
-          <Send className="h-4 w-4" />
+          <Send className={`${hasMessages ? 'h-4 w-4' : 'h-5 w-5'}`} />
         </Button>
       </div>
     </div>
