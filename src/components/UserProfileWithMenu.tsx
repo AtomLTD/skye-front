@@ -1,17 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Moon, Sun, LogOut, User, ChevronUp } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/components/ui/theme-provider';
 import { ColorPicker } from './ColorPicker';
-import { ApiKeySettings } from './ApiKeySettings';
 
 export function UserProfileWithMenu() {
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
+  // Закрытие меню при клике вне его области
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMenuOpen]);
+
+  // Проверка пользователя ПОСЛЕ всех хуков
   if (!user) return null;
 
   const getInitials = (name: string) => {
@@ -37,7 +55,7 @@ export function UserProfileWithMenu() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={menuRef}>
       {/* Кликабельный профиль */}
       <Button
         variant="ghost"
@@ -65,35 +83,34 @@ export function UserProfileWithMenu() {
 
       {/* Контекстное меню */}
       {isMenuOpen && (
-        <div className="absolute bottom-full left-0 right-0 bg-background border border-border rounded-md shadow-lg mb-1">
-          <div className="p-2 space-y-1">
-          <ApiKeySettings />
-          <ColorPicker />
+        <div className="absolute bottom-full left-0 right-0 bg-background border border-border rounded-md shadow-lg mb-2">
+          <div className="p-3 space-y-2">
+            <ColorPicker />
             <Button
               variant="ghost"
-              size="sm"
+              size="default"
               onClick={toggleTheme}
-              className="w-full justify-start"
+              className="w-full justify-start h-10"
             >
               {theme === 'dark' ? (
                 <>
-                  <Sun className="mr-2 h-4 w-4" />
+                  <Sun className="mr-3 h-4 w-4" />
                   Светлая тема
                 </>
               ) : (
                 <>
-                  <Moon className="mr-2 h-4 w-4" />
+                  <Moon className="mr-3 h-4 w-4" />
                   Темная тема
                 </>
               )}
             </Button>
             <Button
               variant="ghost"
-              size="sm"
+              size="default"
               onClick={handleLogout}
-              className="w-full justify-start text-destructive hover:text-destructive"
+              className="w-full justify-start h-10 text-destructive hover:text-destructive"
             >
-              <LogOut className="mr-2 h-4 w-4" />
+              <LogOut className="mr-3 h-4 w-4" />
               Выйти
             </Button>
           </div>

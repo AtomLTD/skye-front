@@ -19,7 +19,7 @@ import { useMessages } from '@/hooks/useMessages';
 import { getChatMessages } from '@/lib/storage';
 
 function ChatPageContent() {
-  const { isMobile, toggleSidebar, state } = useSidebar();
+  const { isMobile, toggleSidebar } = useSidebar();
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const { chats, loading: chatsLoading, createChat, renameChat, removeChat, autoRenameChat } = useChats();
   const { messages, loading: messagesLoading, isGenerating, sendMessage, stopGeneration, regenerateMessage } = useMessages(selectedChatId);
@@ -83,13 +83,10 @@ function ChatPageContent() {
 
   return (
     <>
-      <Sidebar>
+      <Sidebar variant='floating'>
         <SidebarHeader>
           <div className="flex items-center justify-between px-2">
             <h1 className="text-xl font-bold">Skye</h1>
-            <Button variant="ghost" size="icon" onClick={toggleSidebar} className="md:hidden">
-              <PanelLeft className="h-5 w-5" />
-            </Button>
           </div>
         </SidebarHeader>
         <SidebarContent>
@@ -109,35 +106,11 @@ function ChatPageContent() {
       </Sidebar>
 
       <main className="flex flex-1 flex-col max-w-2xl mx-auto relative">
-        {!isMobile && state === 'collapsed' && (
-          <div className="absolute left-0 top-4 z-10">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleSidebar}
-              className="bg-background border border-border shadow-sm hover:bg-accent"
-            >
-              <PanelLeft className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
-
-        {/* Header для мобильных */}
-        <div className="flex items-center gap-2 p-3 md:hidden">
+        {/* Единый хедер для всех устройств */}
+        <div className="flex items-center gap-2 p-3">
           <Button variant="ghost" size="icon" onClick={toggleSidebar}>
             <PanelLeft className="h-5 w-5" />
           </Button>
-          {messages.length > 0 && (
-            <h2 className="text-lg font-semibold">
-              {selectedChatId
-                ? chats.find(c => c.id === selectedChatId)?.title || 'Чат'
-                : 'Новый чат'}
-            </h2>
-          )}
-        </div>
-
-        {/* Desktop Header - только заголовок без кнопки */}
-        <div className="hidden md:flex items-center p-3">
           {messages.length > 0 && (
             <h2 className="text-lg font-semibold">
               {selectedChatId

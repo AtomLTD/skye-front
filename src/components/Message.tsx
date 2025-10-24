@@ -3,6 +3,7 @@ import { Message as MessageType } from '@/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Copy, RefreshCw, Check } from 'lucide-react';
+import { useIsTouchDevice } from '@/hooks/use-touch-device';
 
 interface MessageProps {
   message: MessageType;
@@ -11,6 +12,7 @@ interface MessageProps {
 
 export function Message({ message, onRegenerate }: MessageProps) {
   const [isCopied, setIsCopied] = useState(false);
+  const isTouchDevice = useIsTouchDevice();
 
   const handleCopy = async () => {
     try {
@@ -71,8 +73,12 @@ export function Message({ message, onRegenerate }: MessageProps) {
         {/* Action buttons container - всегда занимает место */}
         <div 
           className={cn(
-            'flex gap-1 mt-2 h-7 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none',
-            isUserMessage ? 'justify-end' : 'justify-start'
+            'flex gap-1 mt-2 h-7',
+            isUserMessage ? 'justify-end' : 'justify-start',
+            // На touch-устройствах кнопки всегда видны, на остальных - по hover
+            isTouchDevice 
+              ? 'opacity-100' 
+              : 'opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none'
           )}
         >
           {!message.isStreaming && (
@@ -80,7 +86,13 @@ export function Message({ message, onRegenerate }: MessageProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-7 px-2 text-xs transition-all duration-300 ease-in-out opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none"
+                className={cn(
+                  "h-7 px-2 text-xs transition-all duration-300 ease-in-out",
+                  // На touch-устройствах кнопки всегда видны, на остальных - по hover
+                  isTouchDevice
+                    ? 'opacity-100'
+                    : 'opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none'
+                )}
                 onClick={handleCopy}
               >
                 {isCopied ? (
@@ -99,7 +111,13 @@ export function Message({ message, onRegenerate }: MessageProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-7 px-2 text-xs transition-all duration-300 ease-in-out opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none"
+                  className={cn(
+                    "h-7 px-2 text-xs transition-all duration-300 ease-in-out",
+                    // На touch-устройствах кнопки всегда видны, на остальных - по hover
+                    isTouchDevice
+                      ? 'opacity-100'
+                      : 'opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none'
+                  )}
                   onClick={handleRegenerate}
                 >
                   <RefreshCw className="h-3 w-3 mr-1" />
