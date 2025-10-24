@@ -4,6 +4,7 @@ import { useTheme } from '@/components/ui/theme-provider';
 import { useAuth } from '@/hooks/useAuth';
 import { Separator } from '@/components/ui/separator';
 import { ColorPicker } from '@/components/ColorPicker';
+import { ApiKeySettings } from '@/components/ApiKeySettings';
 
 export function SidebarSettings() {
   const { theme, setTheme } = useTheme();
@@ -19,6 +20,8 @@ export function SidebarSettings() {
 
   return (
     <div className="p-3 space-y-3">
+      <Separator />
+      <ApiKeySettings />
       <Separator />
       <ColorPicker />
       <Separator />

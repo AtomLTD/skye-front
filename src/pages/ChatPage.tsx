@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PanelLeft } from 'lucide-react';
 import {
   Sidebar,
@@ -16,16 +16,35 @@ import { UserProfileWithMenu } from '@/components/UserProfileWithMenu';
 import { AuthGuard } from '@/components/AuthGuard';
 import { useChats } from '@/hooks/useChats';
 import { useMessages } from '@/hooks/useMessages';
+import { getChatMessages } from '@/lib/storage';
 
 function ChatPageContent() {
   const { isMobile, toggleSidebar, state } = useSidebar();
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
-  const { chats, loading: chatsLoading, createChat, renameChat, removeChat } = useChats();
-  const { messages, loading: messagesLoading, sendMessage } = useMessages(selectedChatId);
+  const { chats, loading: chatsLoading, createChat, renameChat, removeChat, autoRenameChat } = useChats();
+  const { messages, loading: messagesLoading, isGenerating, sendMessage, stopGeneration } = useMessages(selectedChatId);
+
+  // Отслеживаем, был ли чат только что создан для автоматического переименования
+  const [newChatId, setNewChatId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Проверяем, если у нового чата появилось первое сообщение от пользователя
+    if (newChatId) {
+      const chatMessages = getChatMessages(newChatId);
+      const hasUserMessage = chatMessages.some(m => m.role === 'user');
+      
+      if (hasUserMessage) {
+        // Запускаем автоматическое переименование
+        autoRenameChat(newChatId);
+        setNewChatId(null);
+      }
+    }
+  }, [messages, newChatId, autoRenameChat]);
 
   const handleCreateChat = (title: string) => {
     const newChat = createChat(title);
     setSelectedChatId(newChat.id);
+    setNewChatId(newChat.id);
     if (isMobile) {
       toggleSidebar();
     }
@@ -50,11 +69,16 @@ function ChatPageContent() {
       // Создаем новый чат, если не выбран
       const newChat = createChat('Новый чат');
       setSelectedChatId(newChat.id);
+      setNewChatId(newChat.id);
       // Отправляем сообщение сразу в новый чат
       sendMessage(content, newChat.id);
     } else {
       sendMessage(content);
     }
+  };
+
+  const handleStopGeneration = () => {
+    stopGeneration();
   };
 
   return (
@@ -134,9 +158,11 @@ function ChatPageContent() {
         {/* Когда есть сообщения - показываем поле ввода снизу */}
         {messages.length > 0 && (
           <MessageInput 
-            onSend={handleSendMessage} 
+            onSend={handleSendMessage}
+            onStop={handleStopGeneration}
             disabled={messagesLoading}
             hasMessages={true}
+            isGenerating={isGenerating}
           />
         )}
       </main>

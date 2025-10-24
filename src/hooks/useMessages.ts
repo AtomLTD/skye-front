@@ -1,10 +1,69 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Message } from '@/types';
-import { getChatMessages, addMessage } from '@/lib/storage';
+import { getChatMessages, addMessage, updateMessage } from '@/lib/storage';
+import { timewebAI, AIMessage } from '@/lib/timeweb-ai';
+
+// Глобальный менеджер для отслеживания активных генераций
+class GenerationManager {
+  private activeGenerations = new Map<string, AbortController>();
+  private messageUpdateListeners = new Map<string, Set<(message: Message) => void>>();
+
+  startGeneration(messageId: string, controller: AbortController) {
+    this.activeGenerations.set(messageId, controller);
+  }
+
+  stopGeneration(messageId: string) {
+    const controller = this.activeGenerations.get(messageId);
+    if (controller) {
+      controller.abort();
+      this.activeGenerations.delete(messageId);
+    }
+  }
+
+  isGenerating(messageId: string): boolean {
+    return this.activeGenerations.has(messageId);
+  }
+
+  completeGeneration(messageId: string) {
+    this.activeGenerations.delete(messageId);
+  }
+
+  subscribeToMessage(chatId: string, callback: (message: Message) => void) {
+    if (!this.messageUpdateListeners.has(chatId)) {
+      this.messageUpdateListeners.set(chatId, new Set());
+    }
+    this.messageUpdateListeners.get(chatId)!.add(callback);
+
+    return () => {
+      const listeners = this.messageUpdateListeners.get(chatId);
+      if (listeners) {
+        listeners.delete(callback);
+        if (listeners.size === 0) {
+          this.messageUpdateListeners.delete(chatId);
+        }
+      }
+    };
+  }
+
+  notifyMessageUpdate(chatId: string, message: Message) {
+    const listeners = this.messageUpdateListeners.get(chatId);
+    if (listeners) {
+      listeners.forEach(callback => callback(message));
+    }
+  }
+}
+
+const generationManager = new GenerationManager();
 
 export function useMessages(chatId: string | null) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const currentChatIdRef = useRef(chatId);
+
+  useEffect(() => {
+    currentChatIdRef.current = chatId;
+  }, [chatId]);
 
   useEffect(() => {
     if (!chatId) {
@@ -14,25 +73,77 @@ export function useMessages(chatId: string | null) {
     }
 
     setLoading(true);
-    // Симуляция загрузки
     setTimeout(() => {
       const chatMessages = getChatMessages(chatId);
       setMessages(chatMessages);
       setLoading(false);
+
+      // Проверяем, есть ли незавершенные генерации
+      const hasIncompleteMessage = chatMessages.some(m => m.isStreaming && !m.isComplete);
+      setIsGenerating(hasIncompleteMessage);
     }, 300);
+
+    // Подписываемся на обновления сообщений
+    const unsubscribe = generationManager.subscribeToMessage(chatId, (updatedMessage) => {
+      // Обновляем только если это текущий активный чат
+      if (currentChatIdRef.current === chatId) {
+        setMessages(prev => {
+          const index = prev.findIndex(m => m.id === updatedMessage.id);
+          if (index !== -1) {
+            const newMessages = [...prev];
+            newMessages[index] = updatedMessage;
+            return newMessages;
+          }
+          return prev;
+        });
+        
+        // Обновляем флаг генерации
+        setIsGenerating(!updatedMessage.isComplete);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, [chatId]);
 
+  const stopGeneration = useCallback(() => {
+    const streamingMessage = messages.find(m => m.isStreaming && !m.isComplete);
+    if (streamingMessage) {
+      generationManager.stopGeneration(streamingMessage.id);
+      
+      // Помечаем сообщение как завершенное
+      updateMessage(streamingMessage.id, {
+        isStreaming: false,
+        isComplete: true,
+      });
+
+      setIsGenerating(false);
+      
+      // Обновляем локальное состояние
+      setMessages(prev => 
+        prev.map(m => 
+          m.id === streamingMessage.id 
+            ? { ...m, isStreaming: false, isComplete: true }
+            : m
+        )
+      );
+    }
+  }, [messages]);
+
   const sendMessage = useCallback(
-    (content: string, targetChatId?: string) => {
+    async (content: string, targetChatId?: string) => {
       const messagesChatId = targetChatId || chatId;
       if (!messagesChatId) return;
 
+      // Создаем сообщение пользователя
       const userMessage: Message = {
-        id: 'msg-' + Date.now(),
+        id: 'msg-user-' + Date.now(),
         chatId: messagesChatId,
         role: 'user',
         content,
         timestamp: Date.now(),
+        isComplete: true,
       };
 
       addMessage(userMessage);
@@ -42,23 +153,96 @@ export function useMessages(chatId: string | null) {
         setMessages(prev => [...prev, userMessage]);
       }
 
-      // Симуляция ответа ИИ
-      setTimeout(() => {
-        const aiMessage: Message = {
-          id: 'msg-' + Date.now(),
-          chatId: messagesChatId,
-          role: 'assistant',
-          content: 'Это демонстрационный ответ от Skye ИИ. В будущем здесь будет настоящий ответ модели!',
-          timestamp: Date.now(),
-        };
+      // Создаем пустое сообщение ассистента для streaming
+      const aiMessageId = 'msg-ai-' + Date.now();
+      const aiMessage: Message = {
+        id: aiMessageId,
+        chatId: messagesChatId,
+        role: 'assistant',
+        content: '',
+        timestamp: Date.now(),
+        isStreaming: true,
+        isComplete: false,
+      };
 
-        addMessage(aiMessage);
+      addMessage(aiMessage);
 
-        // Обновляем messages только если это текущий чат
-        if (messagesChatId === chatId) {
-          setMessages(prev => [...prev, aiMessage]);
-        }
-      }, 1000);
+      if (messagesChatId === chatId) {
+        setMessages(prev => [...prev, aiMessage]);
+        setIsGenerating(true);
+      }
+
+      // Получаем историю сообщений для контекста
+      const history = getChatMessages(messagesChatId);
+      const aiMessages: AIMessage[] = history
+        .filter(m => m.id !== aiMessageId) // Исключаем только что созданное пустое сообщение
+        .map(m => ({
+          role: m.role,
+          content: m.content,
+        }));
+
+      // Создаем AbortController для возможности отмены
+      const abortController = new AbortController();
+      generationManager.startGeneration(aiMessageId, abortController);
+
+      // Запускаем генерацию
+      try {
+        await timewebAI.generateStream({
+          messages: aiMessages,
+          signal: abortController.signal,
+          onChunk: (chunk: string) => {
+            // Обновляем содержимое сообщения
+            aiMessage.content += chunk;
+            
+            // Сохраняем в storage
+            updateMessage(aiMessageId, {
+              content: aiMessage.content,
+            });
+
+            // Уведомляем подписчиков
+            generationManager.notifyMessageUpdate(messagesChatId, { ...aiMessage });
+          },
+          onComplete: (fullText: string) => {
+            // Финализируем сообщение
+            updateMessage(aiMessageId, {
+              content: fullText,
+              isStreaming: false,
+              isComplete: true,
+            });
+
+            generationManager.completeGeneration(aiMessageId);
+
+            const finalMessage = { ...aiMessage, content: fullText, isStreaming: false, isComplete: true };
+            generationManager.notifyMessageUpdate(messagesChatId, finalMessage);
+
+            if (messagesChatId === chatId) {
+              setIsGenerating(false);
+            }
+          },
+          onError: (error: Error) => {
+            console.error('Error generating response:', error);
+            
+            // Обновляем сообщение с ошибкой
+            const errorContent = aiMessage.content || 'Произошла ошибка при генерации ответа. Пожалуйста, попробуйте еще раз.';
+            updateMessage(aiMessageId, {
+              content: errorContent,
+              isStreaming: false,
+              isComplete: true,
+            });
+
+            generationManager.completeGeneration(aiMessageId);
+
+            const errorMessage = { ...aiMessage, content: errorContent, isStreaming: false, isComplete: true };
+            generationManager.notifyMessageUpdate(messagesChatId, errorMessage);
+
+            if (messagesChatId === chatId) {
+              setIsGenerating(false);
+            }
+          },
+        });
+      } catch (error) {
+        console.error('Unexpected error in sendMessage:', error);
+      }
     },
     [chatId]
   );
@@ -66,6 +250,8 @@ export function useMessages(chatId: string | null) {
   return {
     messages,
     loading,
+    isGenerating,
     sendMessage,
+    stopGeneration,
   };
 }

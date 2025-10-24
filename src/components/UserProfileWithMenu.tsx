@@ -5,6 +5,7 @@ import { Moon, Sun, LogOut, User, ChevronUp } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/components/ui/theme-provider';
 import { ColorPicker } from './ColorPicker';
+import { ApiKeySettings } from './ApiKeySettings';
 
 export function UserProfileWithMenu() {
   const { user, logout } = useAuth();
@@ -66,6 +67,7 @@ export function UserProfileWithMenu() {
       {isMenuOpen && (
         <div className="absolute bottom-full left-0 right-0 bg-background border border-border rounded-md shadow-lg mb-1">
           <div className="p-2 space-y-1">
+          <ApiKeySettings />
           <ColorPicker />
             <Button
               variant="ghost"

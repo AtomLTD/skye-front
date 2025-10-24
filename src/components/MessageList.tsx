@@ -76,7 +76,7 @@ export function MessageList({ messages, loading, showWelcomeMessage = true, onSe
         >
           <div
             className={cn(
-              'max-w-[70%] rounded-md px-4 py-2',
+              'max-w-[70%] rounded-md px-4 py-2 relative',
               message.role === 'user'
                 ? ''
                 : 'bg-muted'
@@ -92,7 +92,15 @@ export function MessageList({ messages, loading, showWelcomeMessage = true, onSe
           >
             <div className="text-sm whitespace-pre-wrap break-words">
               {message.content}
+              {message.isStreaming && !message.isComplete && (
+                <span className="inline-block ml-1 w-1 h-4 bg-current animate-pulse" />
+              )}
             </div>
+            {message.isStreaming && !message.isComplete && (
+              <div className="absolute -bottom-5 left-0 text-xs text-muted-foreground">
+                Генерация...
+              </div>
+            )}
           </div>
         </div>
       ))}

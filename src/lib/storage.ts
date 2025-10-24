@@ -132,3 +132,27 @@ export const addMessage = (message: Message): void => {
     timestamp: message.timestamp,
   });
 };
+
+export const updateMessage = (messageId: string, updates: Partial<Message>): void => {
+  const messages = getMessages();
+  const index = messages.findIndex(m => m.id === messageId);
+  if (index !== -1) {
+    messages[index] = { ...messages[index], ...updates };
+    saveMessages(messages);
+
+    // Update chat's last message if this is the latest message
+    const message = messages[index];
+    const chatMessages = messages.filter(m => m.chatId === message.chatId);
+    const latestMessage = chatMessages[chatMessages.length - 1];
+    if (latestMessage.id === messageId) {
+      updateChat(message.chatId, {
+        lastMessage: message.content,
+        timestamp: message.timestamp,
+      });
+    }
+  }
+};
+
+export const getMessage = (messageId: string): Message | undefined => {
+  return getMessages().find(m => m.id === messageId);
+};

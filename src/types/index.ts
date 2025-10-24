@@ -4,6 +4,8 @@ export interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: number;
+  isStreaming?: boolean; // Флаг для сообщений в процессе генерации
+  isComplete?: boolean; // Флаг завершенности генерации
 }
 
 export interface Chat {
@@ -11,6 +13,7 @@ export interface Chat {
   title: string;
   lastMessage?: string;
   timestamp: number;
+  isGeneratingTitle?: boolean; // Флаг генерации названия
 }
 
 export interface User {
