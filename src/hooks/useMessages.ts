@@ -131,6 +131,111 @@ export function useMessages(chatId: string | null) {
     }
   }, [messages]);
 
+  const regenerateMessage = useCallback(
+    async (messageId: string) => {
+      if (!chatId) return;
+
+      // Находим сообщение ассистента для регенерации
+      const messageToRegenerate = messages.find(m => m.id === messageId);
+      if (!messageToRegenerate || messageToRegenerate.role !== 'assistant') {
+        return;
+      }
+
+      // Находим последнее сообщение пользователя перед этим сообщением ассистента
+      const messageIndex = messages.findIndex(m => m.id === messageId);
+      const previousMessages = messages.slice(0, messageIndex);
+      const lastUserMessage = [...previousMessages].reverse().find(m => m.role === 'user');
+      
+      if (!lastUserMessage) {
+        console.error('No user message found before assistant message');
+        return;
+      }
+
+      // Очищаем содержимое сообщения и начинаем регенерацию
+      const updatedMessage: Message = {
+        ...messageToRegenerate,
+        content: '',
+        isStreaming: true,
+        isComplete: false,
+      };
+
+      updateMessage(messageId, {
+        content: '',
+        isStreaming: true,
+        isComplete: false,
+      });
+
+      setMessages(prev => 
+        prev.map(m => m.id === messageId ? updatedMessage : m)
+      );
+      setIsGenerating(true);
+
+      // Получаем историю сообщений до регенерируемого (не включая его)
+      const history = previousMessages.map(m => ({
+        role: m.role,
+        content: m.content,
+      }));
+
+      // Создаем AbortController для возможности отмены
+      const abortController = new AbortController();
+      generationManager.startGeneration(messageId, abortController);
+
+      // Запускаем генерацию
+      try {
+        await timewebAI.generateStream({
+          messages: history,
+          signal: abortController.signal,
+          onChunk: (chunk: string) => {
+            // Обновляем содержимое сообщения
+            updatedMessage.content += chunk;
+            
+            // Сохраняем в storage
+            updateMessage(messageId, {
+              content: updatedMessage.content,
+            });
+
+            // Уведомляем подписчиков
+            generationManager.notifyMessageUpdate(chatId, { ...updatedMessage });
+          },
+          onComplete: (fullText: string) => {
+            // Финализируем сообщение
+            updateMessage(messageId, {
+              content: fullText,
+              isStreaming: false,
+              isComplete: true,
+            });
+
+            generationManager.completeGeneration(messageId);
+
+            const finalMessage = { ...updatedMessage, content: fullText, isStreaming: false, isComplete: true };
+            generationManager.notifyMessageUpdate(chatId, finalMessage);
+            setIsGenerating(false);
+          },
+          onError: (error: Error) => {
+            console.error('Error regenerating response:', error);
+            
+            // Обновляем сообщение с ошибкой
+            const errorContent = updatedMessage.content || 'Произошла ошибка при генерации ответа. Пожалуйста, попробуйте еще раз.';
+            updateMessage(messageId, {
+              content: errorContent,
+              isStreaming: false,
+              isComplete: true,
+            });
+
+            generationManager.completeGeneration(messageId);
+
+            const errorMessage = { ...updatedMessage, content: errorContent, isStreaming: false, isComplete: true };
+            generationManager.notifyMessageUpdate(chatId, errorMessage);
+            setIsGenerating(false);
+          },
+        });
+      } catch (error) {
+        console.error('Unexpected error in regenerateMessage:', error);
+      }
+    },
+    [chatId, messages]
+  );
+
   const sendMessage = useCallback(
     async (content: string, targetChatId?: string) => {
       const messagesChatId = targetChatId || chatId;
@@ -253,5 +358,6 @@ export function useMessages(chatId: string | null) {
     isGenerating,
     sendMessage,
     stopGeneration,
+    regenerateMessage,
   };
 }

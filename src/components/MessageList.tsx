@@ -1,18 +1,20 @@
 import { useEffect, useRef } from 'react';
-import { Message } from '@/types';
+import { Message as MessageType } from '@/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { MessageInput } from './MessageInput';
+import { Message } from './Message';
 
 interface MessageListProps {
-  messages: Message[];
+  messages: MessageType[];
   loading: boolean;
   showWelcomeMessage?: boolean;
   onSendMessage?: (message: string) => void;
   messagesLoading?: boolean;
+  onRegenerateMessage?: (messageId: string) => void;
 }
 
-export function MessageList({ messages, loading, showWelcomeMessage = true, onSendMessage, messagesLoading }: MessageListProps) {
+export function MessageList({ messages, loading, showWelcomeMessage = true, onSendMessage, messagesLoading, onRegenerateMessage }: MessageListProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -67,42 +69,11 @@ export function MessageList({ messages, loading, showWelcomeMessage = true, onSe
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-4">
       {messages.map(message => (
-        <div
+        <Message
           key={message.id}
-          className={cn(
-            'flex',
-            message.role === 'user' ? 'justify-end' : 'justify-start'
-          )}
-        >
-          <div
-            className={cn(
-              'max-w-[70%] rounded-md px-4 py-2 relative',
-              message.role === 'user'
-                ? ''
-                : 'bg-muted'
-            )}
-            style={
-              message.role === 'user'
-                ? {
-                    backgroundColor: 'var(--brand-message)',
-                    color: 'var(--brand-message-text)',
-                  }
-                : undefined
-            }
-          >
-            <div className="text-sm whitespace-pre-wrap break-words">
-              {message.content}
-              {message.isStreaming && !message.isComplete && (
-                <span className="inline-block ml-1 w-1 h-4 bg-current animate-pulse" />
-              )}
-            </div>
-            {message.isStreaming && !message.isComplete && (
-              <div className="absolute -bottom-5 left-0 text-xs text-muted-foreground">
-                Генерация...
-              </div>
-            )}
-          </div>
-        </div>
+          message={message}
+          onRegenerate={onRegenerateMessage}
+        />
       ))}
       <div ref={messagesEndRef} />
     </div>

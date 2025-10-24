@@ -22,7 +22,7 @@ function ChatPageContent() {
   const { isMobile, toggleSidebar, state } = useSidebar();
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const { chats, loading: chatsLoading, createChat, renameChat, removeChat, autoRenameChat } = useChats();
-  const { messages, loading: messagesLoading, isGenerating, sendMessage, stopGeneration } = useMessages(selectedChatId);
+  const { messages, loading: messagesLoading, isGenerating, sendMessage, stopGeneration, regenerateMessage } = useMessages(selectedChatId);
 
   // Отслеживаем, был ли чат только что создан для автоматического переименования
   const [newChatId, setNewChatId] = useState<string | null>(null);
@@ -153,6 +153,7 @@ function ChatPageContent() {
           showWelcomeMessage={messages.length === 0}
           onSendMessage={handleSendMessage}
           messagesLoading={messagesLoading}
+          onRegenerateMessage={regenerateMessage}
         />
 
         {/* Когда есть сообщения - показываем поле ввода снизу */}
