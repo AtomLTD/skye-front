@@ -6,9 +6,10 @@ import { Textarea } from './ui/textarea';
 interface MessageInputProps {
   onSend: (message: string) => void;
   disabled?: boolean;
+  hasMessages?: boolean;
 }
 
-export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
+export function MessageInput({ onSend, disabled = false, hasMessages = false }: MessageInputProps) {
   const [message, setMessage] = useState('');
 
   const handleSend = () => {
@@ -26,7 +27,7 @@ export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
   };
 
   return (
-    <div className="bg-background p-4">
+    <div className={`bg-background p-4 ${hasMessages ? 'mt-auto' : 'p-0'}`}>
       <div className="flex gap-2 max-w-4xl mx-auto relative">
         <Textarea
           value={message}
