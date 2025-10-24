@@ -41,6 +41,8 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
+  --color-brand-message: var(--brand-message);
+  --color-brand-message-text: var(--brand-message-text);
 }
 
 :root {
@@ -78,6 +80,8 @@
   --sidebar-ring: oklch(0.708 0 0);
   --brand: oklch(0.51 0.05 210);
   --brand-foreground: oklch(0.985 0 0);
+  --brand-message: oklch(0.51 0.05 210 / 0.15);
+  --brand-message-text: oklch(0.38 0.06 210);
 }
 
 .dark {
@@ -114,6 +118,8 @@
   --sidebar-ring: oklch(0.556 0 0);
   --brand: oklch(0.55 0.055 210);
   --brand-foreground: oklch(0.985 0 0);
+  --brand-message: oklch(0.55 0.055 210 / 0.25);
+  --brand-message-text: oklch(0.78 0.06 210);
 }
 
 @layer base {

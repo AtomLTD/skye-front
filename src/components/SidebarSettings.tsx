@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useTheme } from '@/components/ui/theme-provider';
 import { useAuth } from '@/hooks/useAuth';
 import { Separator } from '@/components/ui/separator';
+import { ColorPicker } from '@/components/ColorPicker';
 
 export function SidebarSettings() {
   const { theme, setTheme } = useTheme();
@@ -17,7 +18,9 @@ export function SidebarSettings() {
   };
 
   return (
-    <div className="p-3 space-y-2">
+    <div className="p-3 space-y-3">
+      <Separator />
+      <ColorPicker />
       <Separator />
       <div className="flex items-center gap-2">
         <Button

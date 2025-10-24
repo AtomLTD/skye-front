@@ -78,9 +78,17 @@ export function MessageList({ messages, loading, showWelcomeMessage = true, onSe
             className={cn(
               'max-w-[70%] rounded-md px-4 py-2',
               message.role === 'user'
-                ? 'bg-brand text-white'
+                ? ''
                 : 'bg-muted'
             )}
+            style={
+              message.role === 'user'
+                ? {
+                    backgroundColor: 'var(--brand-message)',
+                    color: 'var(--brand-message-text)',
+                  }
+                : undefined
+            }
           >
             <div className="text-sm whitespace-pre-wrap break-words">
               {message.content}
