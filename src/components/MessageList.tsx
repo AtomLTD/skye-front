@@ -49,13 +49,11 @@ export function MessageList({ messages, loading, showWelcomeMessage = true, onSe
             </p>
           </div>
           {onSendMessage && (
-            <div className="flex justify-center">
               <MessageInput 
                 onSend={onSendMessage} 
                 disabled={messagesLoading || false}
                 hasMessages={false}
               />
-            </div>
           )}
         </div>
       </div>
