@@ -78,7 +78,7 @@ export function MessageList({ messages, loading, showWelcomeMessage = true, onSe
             className={cn(
               'max-w-[70%] rounded-md px-4 py-2',
               message.role === 'user'
-                ? 'bg-brand dark:text-black text-white'
+                ? 'bg-brand text-white'
                 : 'bg-muted'
             )}
           >

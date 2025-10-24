@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, PanelLeft } from 'lucide-react';
+import { PanelLeft } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button';
 import { ChatList } from '@/components/ChatList';
 import { MessageList } from '@/components/MessageList';
 import { MessageInput } from '@/components/MessageInput';
-import { SidebarSettings } from '@/components/SidebarSettings';
-import { UserProfile } from '@/components/UserProfile';
+import { UserProfileWithMenu } from '@/components/UserProfileWithMenu';
 import { AuthGuard } from '@/components/AuthGuard';
 import { useChats } from '@/hooks/useChats';
 import { useMessages } from '@/hooks/useMessages';
@@ -81,8 +80,7 @@ function ChatPageContent() {
           />
         </SidebarContent>
         <SidebarFooter>
-          <UserProfile />
-          <SidebarSettings />
+          <UserProfileWithMenu />
         </SidebarFooter>
       </Sidebar>
 
@@ -101,24 +99,28 @@ function ChatPageContent() {
         )}
 
         {/* Header для мобильных */}
-        <div className="flex items-center gap-2 p-3 md:hidden bg-zinc-50 dark:bg-zinc-900 rounded-lg mx-2">
+        <div className="flex items-center gap-2 p-3 md:hidden">
           <Button variant="ghost" size="icon" onClick={toggleSidebar}>
             <PanelLeft className="h-5 w-5" />
           </Button>
-          <h2 className="text-lg font-semibold">
-            {selectedChatId
-              ? chats.find(c => c.id === selectedChatId)?.title || 'Чат'
-              : 'Новый чат'}
-          </h2>
+          {messages.length > 0 && (
+            <h2 className="text-lg font-semibold">
+              {selectedChatId
+                ? chats.find(c => c.id === selectedChatId)?.title || 'Чат'
+                : 'Новый чат'}
+            </h2>
+          )}
         </div>
 
         {/* Desktop Header - только заголовок без кнопки */}
-        <div className="hidden md:flex items-center p-3 bg-zinc-50 dark:bg-zinc-900 rounded-lg mx-2">
-          <h2 className="text-lg font-semibold">
-            {selectedChatId
-              ? chats.find(c => c.id === selectedChatId)?.title || 'Чат'
-              : 'Новый чат'}
-          </h2>
+        <div className="hidden md:flex items-center p-3">
+          {messages.length > 0 && (
+            <h2 className="text-lg font-semibold">
+              {selectedChatId
+                ? chats.find(c => c.id === selectedChatId)?.title || 'Чат'
+                : 'Новый чат'}
+            </h2>
+          )}
         </div>
 
         <MessageList 
