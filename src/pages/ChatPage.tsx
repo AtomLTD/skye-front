@@ -14,8 +14,10 @@ import { MessageList } from '@/components/MessageList';
 import { MessageInput } from '@/components/MessageInput';
 import { UserProfileWithMenu } from '@/components/UserProfileWithMenu';
 import { AuthGuard } from '@/components/AuthGuard';
+import { Onboarding } from '@/components/Onboarding';
 import { useChats } from '@/hooks/useChats';
 import { useMessages } from '@/hooks/useMessages';
+import { useOnboarding } from '@/hooks/useOnboarding';
 import { getChatMessages } from '@/lib/storage';
 
 function ChatPageContent() {
@@ -23,6 +25,7 @@ function ChatPageContent() {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const { chats, loading: chatsLoading, createChat, renameChat, removeChat, autoRenameChat } = useChats();
   const { messages, loading: messagesLoading, isGenerating, sendMessage, stopGeneration, regenerateMessage } = useMessages(selectedChatId);
+  const { showOnboarding, completeOnboarding, skipOnboarding } = useOnboarding();
 
   // Отслеживаем, был ли чат только что создан для автоматического переименования
   const [newChatId, setNewChatId] = useState<string | null>(null);
@@ -83,6 +86,13 @@ function ChatPageContent() {
 
   return (
     <>
+      {showOnboarding && (
+        <Onboarding 
+          onComplete={completeOnboarding} 
+          onSkip={skipOnboarding} 
+        />
+      )}
+      
       <Sidebar variant='floating'>
         <SidebarHeader>
           <div className="flex items-center justify-between px-2">
