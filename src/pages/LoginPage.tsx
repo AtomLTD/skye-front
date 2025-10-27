@@ -1,9 +1,11 @@
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { CircleArrowOutUpLeft, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
+  const { t } = useTranslation();
   const { login, loading, error, clearError } = useAuth();
 
   const handleYandexLogin = () => {
@@ -15,9 +17,9 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold">Skye</CardTitle>
+          <CardTitle className="text-3xl font-bold">{t('app.name')}</CardTitle>
           <CardDescription>
-            Войдите в свой аккаунт, чтобы начать общение с ИИ
+            {t('auth.login.title')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -37,11 +39,11 @@ export default function LoginPage() {
             size="lg"
           >
             <CircleArrowOutUpLeft className="w-5 h-5" />
-            {loading ? 'Авторизация...' : 'Войти через Яндекс'}
+            {loading ? t('auth.login.buttonLoading') : t('auth.login.button')}
           </Button>
           
           <p className="text-center text-sm text-muted-foreground">
-            Нажимая "Войти через Яндекс", вы соглашаетесь с условиями использования
+            {t('auth.login.terms')}
           </p>
         </CardContent>
       </Card>

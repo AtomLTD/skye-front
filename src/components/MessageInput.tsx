@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Send, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from './ui/textarea';
@@ -18,6 +19,7 @@ export function MessageInput({
   hasMessages = false,
   isGenerating = false,
 }: MessageInputProps) {
+  const { t } = useTranslation();
   const [message, setMessage] = useState('');
 
   const handleSend = () => {
@@ -51,7 +53,7 @@ export function MessageInput({
           value={message}
           onChange={e => setMessage(e.target.value)}
           onKeyDown={handleKeyPress}
-          placeholder={isGenerating ? "Генерация ответа..." : "Введите сообщение..."}
+          placeholder={isGenerating ? t('chat.input.generating') : t('chat.input.placeholder')}
           disabled={disabled || isGenerating}
           className={`flex-1 resize-none ${hasMessages ? '' : 'min-h-[120px] text-lg'}`}
           rows={hasMessages ? 2 : 4}
@@ -62,7 +64,7 @@ export function MessageInput({
             size="icon"
             variant="destructive"
             className="shrink-0 absolute right-2 bottom-2"
-            title="Остановить генерацию"
+            title={t('chat.input.stopGeneration')}
           >
             <Square className={`${hasMessages ? 'h-4 w-4' : 'h-5 w-5'}`} fill="currentColor" />
           </Button>

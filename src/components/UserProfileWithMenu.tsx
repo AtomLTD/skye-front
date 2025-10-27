@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Moon, Sun, LogOut, User, ChevronUp, RotateCcw } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/components/ui/theme-provider';
 import { ColorPicker } from './ColorPicker';
+import { LanguageSelector } from './LanguageSelector';
 import { useOnboarding } from '@/hooks/useOnboarding';
 
 export function UserProfileWithMenu() {
+  const { t } = useTranslation();
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -86,9 +89,10 @@ export function UserProfileWithMenu() {
       {/* Контекстное меню */}
       {isMenuOpen && (
         <div className="absolute bottom-full left-0 right-0 bg-background border border-border rounded-md shadow-lg mb-2">
-          <div className="p-3 space-y-4">
+          <div className="p-3 space-y-2">
 
             <ColorPicker />
+            <LanguageSelector />
             <Button
               variant="ghost"
               size="default"
@@ -98,12 +102,12 @@ export function UserProfileWithMenu() {
               {theme === 'dark' ? (
                 <>
                   <Sun className="mr-3 h-4 w-4" />
-                  Светлая тема
+                  {t('user.menu.lightTheme')}
                 </>
               ) : (
                 <>
                   <Moon className="mr-3 h-4 w-4" />
-                  Темная тема
+                  {t('user.menu.darkTheme')}
                 </>
               )}
             </Button>
@@ -111,7 +115,7 @@ export function UserProfileWithMenu() {
               <RotateCcw 
                 className="mr-3 h-4 w-4"
               />
-              Пройти обучение
+              {t('user.menu.tutorial')}
             </Button>
             <Button
               variant="ghost"
@@ -120,7 +124,7 @@ export function UserProfileWithMenu() {
               className="w-full justify-start h-10 text-destructive hover:text-destructive"
             >
               <LogOut className="mr-3 h-4 w-4" />
-              Выйти
+              {t('user.menu.logout')}
             </Button>
           </div>
         </div>

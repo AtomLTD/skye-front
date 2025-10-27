@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Message as MessageType } from '@/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ interface MessageProps {
 }
 
 export function Message({ message, onRegenerate }: MessageProps) {
+  const { t } = useTranslation();
   const [isCopied, setIsCopied] = useState(false);
   const isTouchDevice = useIsTouchDevice();
 
@@ -65,7 +67,7 @@ export function Message({ message, onRegenerate }: MessageProps) {
           </div>
           {message.isStreaming && !message.isComplete && (
             <div className="absolute -bottom-5 left-0 text-xs text-muted-foreground">
-              Генерация...
+              {t('chat.message.generating')}
             </div>
           )}
         </div>
@@ -98,12 +100,12 @@ export function Message({ message, onRegenerate }: MessageProps) {
                 {isCopied ? (
                   <>
                     <Check className="h-3 w-3 mr-1" />
-                    Скопировано
+                    {t('chat.message.copied')}
                   </>
                 ) : (
                   <>
                     <Copy className="h-3 w-3 mr-1" />
-                    Копировать
+                    {t('chat.message.copy')}
                   </>
                 )}
               </Button>
@@ -121,7 +123,7 @@ export function Message({ message, onRegenerate }: MessageProps) {
                   onClick={handleRegenerate}
                 >
                   <RefreshCw className="h-3 w-3 mr-1" />
-                  Регенерировать
+                  {t('chat.message.regenerate')}
                 </Button>
               )}
             </>

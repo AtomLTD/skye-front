@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Plus, Trash2, Edit2, MoreVertical } from 'lucide-react';
 import { Chat } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -40,6 +41,7 @@ export function ChatList({
   onRenameChat,
   onDeleteChat,
 }: ChatListProps) {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
@@ -80,7 +82,7 @@ export function ChatList({
   }, [isTouchDevice, contextMenuChatId]);
 
   const handleCreateChat = () => {
-    const title = 'Новый чат';
+    const title = t('chat.newChat');
     onCreateChat(title);
   };
 
@@ -177,11 +179,11 @@ export function ChatList({
           className="bg-brand text-white hover:bg-brand/90"
         >
           <Plus/>
-          Чат
+          {t('chat.chat')}
         </Button>
           <Input
             type="search"
-            placeholder="Поиск..."
+            placeholder={t('chat.search')}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
           />
@@ -197,7 +199,7 @@ export function ChatList({
           </>
         ) : filteredChats.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center text-sm text-muted-foreground">
-            {searchQuery ? 'Чаты не найдены' : 'Нет чатов'}
+            {searchQuery ? t('chat.notFound') : t('chat.noChats')}
           </div>
         ) : (
           filteredChats.map((chat, index) => (
@@ -264,14 +266,14 @@ export function ChatList({
                   <ContextMenuContent>
                     <ContextMenuItem onClick={() => handleRename(chat.id, chat.title)}>
                       <Edit2 className="h-4 w-4" />
-                      Переименовать
+                      {t('chat.rename')}
                     </ContextMenuItem>
                     <ContextMenuItem
                       variant="destructive"
                       onClick={() => handleDeleteClick(chat.id)}
                     >
                       <Trash2 className="h-4 w-4" />
-                      Удалить
+                      {t('chat.delete')}
                     </ContextMenuItem>
                   </ContextMenuContent>
                 )}
@@ -294,7 +296,7 @@ export function ChatList({
                       className="w-full justify-start"
                     >
                       <Edit2 className="h-4 w-4 mr-2" />
-                      Переименовать
+                      {t('chat.rename')}
                     </Button>
                     <Button
                       variant="ghost"
@@ -306,7 +308,7 @@ export function ChatList({
                       className="w-full justify-start text-destructive hover:text-destructive"
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
-                      Удалить
+                      {t('chat.delete')}
                     </Button>
                   </div>
                 </div>
@@ -320,17 +322,17 @@ export function ChatList({
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Удалить чат?</DialogTitle>
+            <DialogTitle>{t('chat.deleteTitle')}</DialogTitle>
             <DialogDescription>
-              Это действие нельзя отменить. Все сообщения в этом чате будут удалены.
+              {t('chat.deleteDescription')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
-              Отмена
+              {t('chat.cancel')}
             </Button>
             <Button variant="destructive" onClick={handleConfirmDelete}>
-              Удалить
+              {t('chat.delete')}
             </Button>
           </DialogFooter>
         </DialogContent>

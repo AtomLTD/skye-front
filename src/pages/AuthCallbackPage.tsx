@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertCircle, CheckCircle } from 'lucide-react';
 
 export default function AuthCallbackPage() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const { handleAuthCallback, error, loading } = useAuth();
   const hasProcessed = useRef(false);
@@ -38,9 +40,9 @@ export default function AuthCallbackPage() {
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-2xl font-bold">Авторизация</CardTitle>
+            <CardTitle className="text-2xl font-bold">{t('auth.callback.title')}</CardTitle>
             <CardDescription>
-              Обработка данных авторизации...
+              {t('auth.callback.processing')}
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
@@ -58,10 +60,10 @@ export default function AuthCallbackPage() {
           <CardHeader className="space-y-1 text-center">
             <CardTitle className="text-2xl font-bold text-destructive flex items-center justify-center gap-2">
               <AlertCircle className="h-6 w-6" />
-              Ошибка авторизации
+              {t('auth.callback.errorTitle')}
             </CardTitle>
             <CardDescription>
-              Произошла ошибка при авторизации через Яндекс ID
+              {t('auth.callback.errorDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -69,7 +71,7 @@ export default function AuthCallbackPage() {
               <p className="text-sm text-destructive">{error}</p>
             </div>
             <p className="text-center text-sm text-muted-foreground">
-              Попробуйте авторизоваться снова или обратитесь в поддержку
+              {t('error.tryAgain')}
             </p>
           </CardContent>
         </Card>
@@ -83,15 +85,15 @@ export default function AuthCallbackPage() {
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold text-green-600 flex items-center justify-center gap-2">
             <CheckCircle className="h-6 w-6" />
-            Успешная авторизация
+            {t('auth.callback.successTitle')}
           </CardTitle>
           <CardDescription>
-            Вы успешно авторизованы через Яндекс ID
+            {t('auth.callback.successDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center">
           <p className="text-sm text-muted-foreground">
-            Перенаправление на главную страницу...
+            {t('auth.callback.redirecting')}
           </p>
         </CardContent>
       </Card>

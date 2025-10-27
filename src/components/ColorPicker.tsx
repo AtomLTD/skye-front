@@ -1,22 +1,24 @@
-import { Check } from 'lucide-react';
+import { Check, Palette } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { AccentColor, colorPalettes, useAccentColor } from '@/contexts/AccentColorContext';
 import { useTheme } from '@/components/ui/theme-provider';
 
-const colorLabels: Record<AccentColor, string> = {
-  brand: 'Брендовый',
-  blue: 'Синий',
-  purple: 'Фиолетовый',
-  green: 'Зелёный',
-  orange: 'Оранжевый',
-  red: 'Красный',
-  pink: 'Розовый',
-  cyan: 'Бирюзовый',
-};
-
 export function ColorPicker() {
+  const { t } = useTranslation();
   const { accentColor, setAccentColor } = useAccentColor();
   const { theme } = useTheme();
+
+  const colorLabels: Record<AccentColor, string> = {
+    brand: t('colors.brand'),
+    blue: t('colors.blue'),
+    purple: t('colors.purple'),
+    green: t('colors.green'),
+    orange: t('colors.orange'),
+    red: t('colors.red'),
+    pink: t('colors.pink'),
+    cyan: t('colors.cyan'),
+  };
 
   const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
@@ -24,8 +26,11 @@ export function ColorPicker() {
 
   return (
     <div className="space-y-2">
-      <div className="text-xs font-medium text-muted-foreground px-1">
-        Акцентный цвет
+      <div className="flex items-center gap-2 px-1">
+      <Palette className="h-4 w-4 text-muted-foreground" />
+        <div className="text-xs font-medium text-muted-foreground">
+          {t('colors.accentColor')}
+        </div>
       </div>
       <div className="flex flex-wrap gap-2.5 px-1">
         {colors.map((color) => {

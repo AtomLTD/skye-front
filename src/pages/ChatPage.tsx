@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PanelLeft } from 'lucide-react';
 import {
   Sidebar,
@@ -21,6 +22,7 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 import { getChatMessages } from '@/lib/storage';
 
 function ChatPageContent() {
+  const { t } = useTranslation();
   const { isMobile, toggleSidebar } = useSidebar();
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const { chats, loading: chatsLoading, createChat, renameChat, removeChat, autoRenameChat } = useChats();
@@ -70,7 +72,7 @@ function ChatPageContent() {
   const handleSendMessage = (content: string) => {
     if (!selectedChatId) {
       // Создаем новый чат, если не выбран
-      const newChat = createChat('Новый чат');
+      const newChat = createChat(t('chat.newChat'));
       setSelectedChatId(newChat.id);
       setNewChatId(newChat.id);
       // Отправляем сообщение сразу в новый чат
@@ -96,7 +98,7 @@ function ChatPageContent() {
       <Sidebar variant='floating'>
         <SidebarHeader>
           <div className="flex items-center justify-between px-2">
-            <h1 className="text-xl font-bold">Skye</h1>
+            <h1 className="text-xl font-bold">{t('app.name')}</h1>
           </div>
         </SidebarHeader>
         <SidebarContent>
@@ -124,8 +126,8 @@ function ChatPageContent() {
           {messages.length > 0 && (
             <h2 className="text-lg font-semibold">
               {selectedChatId
-                ? chats.find(c => c.id === selectedChatId)?.title || 'Чат'
-                : 'Новый чат'}
+                ? chats.find(c => c.id === selectedChatId)?.title || t('chat.title')
+                : t('chat.newChat')}
             </h2>
           )}
         </div>

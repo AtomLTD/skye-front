@@ -5,6 +5,7 @@ const STORAGE_KEYS = {
   CHATS: 'skye-chats',
   MESSAGES: 'skye-messages',
   TOKENS: 'skye-tokens',
+  LANGUAGE: 'skye-language',
 } as const;
 
 // Безопасное хранение токенов
@@ -155,4 +156,13 @@ export const updateMessage = (messageId: string, updates: Partial<Message>): voi
 
 export const getMessage = (messageId: string): Message | undefined => {
   return getMessages().find(m => m.id === messageId);
+};
+
+// Language storage
+export const saveLanguage = (language: string): void => {
+  localStorage.setItem(STORAGE_KEYS.LANGUAGE, language);
+};
+
+export const getLanguage = (): string | null => {
+  return localStorage.getItem(STORAGE_KEYS.LANGUAGE);
 };

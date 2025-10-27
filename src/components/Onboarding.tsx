@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -26,43 +27,38 @@ interface OnboardingProps {
 }
 
 export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
+  const { t } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides: OnboardingSlide[] = [
     {
-      title: 'Добро пожаловать в Skye!',
-      description:
-        'Skye - это современный AI-чат клиент с открытым исходным кодом. Мы создаем инструмент, который уважает вашу приватность и дает полный контроль над вашими данными.',
+      title: t('onboarding.slide1.title'),
+      description: t('onboarding.slide1.description'),
       icon: <Sparkles className="w-16 h-16 text-primary" />,
     },
     {
-      title: 'Организуйте ваши чаты',
-      description:
-        'Создавайте неограниченное количество чатов, переименовывайте их и организуйте по темам. Все ваши разговоры всегда под рукой в боковой панели.',
+      title: t('onboarding.slide2.title'),
+      description: t('onboarding.slide2.description'),
       icon: <MessageSquare className="w-16 h-16 text-primary" />,
     },
     {
-      title: 'Адаптивный дизайн',
-      description:
-        'Пользуйтесь Skye на любом устройстве. Интерфейс автоматически адаптируется под размер вашего экрана - будь то смартфон, планшет или десктоп.',
+      title: t('onboarding.slide3.title'),
+      description: t('onboarding.slide3.description'),
       icon: <Settings className="w-16 h-16 text-primary" />,
     },
     {
-      title: 'Светлая и тёмная тема',
-      description:
-        'Переключайтесь между светлой и тёмной темами в настройках. Выберите тот режим, который комфортен для ваших глаз. Тема сама адаптируется под ваш девайс.',
+      title: t('onboarding.slide4.title'),
+      description: t('onboarding.slide4.description'),
       icon: <Moon className="w-16 h-16 text-primary" />,
     },
     {
-      title: 'Приватность и безопасность',
-      description:
-        'Мы не используем трекинг и не собираем ваши данные. Все данные хранятся локально в вашем браузере. Полный контроль над вашей информацией.',
+      title: t('onboarding.slide5.title'),
+      description: t('onboarding.slide5.description'),
       icon: <Shield className="w-16 h-16 text-primary" />,
     },
     {
-      title: 'Открытый исходный код',
-      description:
-        'Skye - это open source проект. Мы делаем всё открыто и прозрачно. Нашли баг или есть идея? Создайте issue на GitHub, и мы обязательно рассмотрим!',
+      title: t('onboarding.slide6.title'),
+      description: t('onboarding.slide6.description'),
       icon: <Github className="w-16 h-16 text-primary" />,
     },
   ];
@@ -120,7 +116,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                     ? 'w-8 bg-brand'
                     : 'w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50'
                 }`}
-                aria-label={`Перейти к слайду ${index + 1}`}
+                aria-label={`${t('aria.goToSlide')} ${index + 1}`}
               />
             ))}
           </div>
@@ -134,14 +130,14 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
               className="flex-1"
             >
               <ChevronLeft className="w-4 h-4 mr-2" />
-              Назад
+              {t('onboarding.navigation.back')}
             </Button>
             <Button onClick={handleNext} className="flex-1 bg-brand hover:bg-brand/90">
               {currentSlide === slides.length - 1 ? (
-                'Начать'
+                t('onboarding.navigation.start')
               ) : (
                 <>
-                  Далее
+                  {t('onboarding.navigation.next')}
                   <ChevronRight className="w-4 h-4 ml-2" />
                 </>
               )}
@@ -151,7 +147,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
           {/* Кнопка пропуска */}
           <div className="text-center mt-4">
             <Button variant="ghost" size="sm" onClick={onSkip} className="text-muted-foreground">
-              Пропустить обучение
+              {t('onboarding.navigation.skip')}
             </Button>
           </div>
         </div>

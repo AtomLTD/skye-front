@@ -1,0 +1,112 @@
+{
+  "app": {
+    "name": "Skye"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in to your account to start chatting with AI",
+      "button": "Sign in with Yandex",
+      "buttonLoading": "Signing in...",
+      "terms": "By clicking \"Sign in with Yandex\", you agree to the terms of use"
+    },
+    "callback": {
+      "title": "Authorization",
+      "processing": "Processing authorization data...",
+      "errorTitle": "Authorization Error",
+      "errorDescription": "An error occurred while authorizing through Yandex ID",
+      "successTitle": "Successfully Authorized",
+      "successDescription": "You have successfully authorized through Yandex ID",
+      "redirecting": "Redirecting to the home page..."
+    }
+  },
+  "chat": {
+    "newChat": "New chat",
+    "chat": "Chat",
+    "createChat": "Create chat",
+    "rename": "Rename",
+    "renameTitle": "Rename chat",
+    "delete": "Delete",
+    "deleteTitle": "Delete chat?",
+    "deleteDescription": "This action cannot be undone. All messages in this chat will be deleted.",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "search": "Search...",
+    "noChats": "No chats",
+    "notFound": "Chats not found",
+    "title": "Chat",
+    "welcome": {
+      "title": "Hello!",
+      "description": "Start a conversation by sending a message below"
+    },
+    "input": {
+      "placeholder": "Enter message...",
+      "generating": "Generating response...",
+      "stopGeneration": "Stop generation"
+    },
+    "message": {
+      "copy": "Copy",
+      "copied": "Copied",
+      "regenerate": "Regenerate",
+      "generating": "Generating..."
+    }
+  },
+  "onboarding": {
+    "slide1": {
+      "title": "Welcome to Skye!",
+      "description": "Skye is a modern open-source AI chat client. We're creating a tool that respects your privacy and gives you full control over your data."
+    },
+    "slide2": {
+      "title": "Organize your chats",
+      "description": "Create unlimited chats, rename them and organize by topic. All your conversations are always at hand in the sidebar."
+    },
+    "slide3": {
+      "title": "Responsive design",
+      "description": "Use Skye on any device. The interface automatically adapts to your screen size - whether it's a smartphone, tablet or desktop."
+    },
+    "slide4": {
+      "title": "Light and dark theme",
+      "description": "Switch between light and dark themes in settings. Choose the mode that's comfortable for your eyes. The theme automatically adapts to your device."
+    },
+    "slide5": {
+      "title": "Privacy and security",
+      "description": "We don't use tracking and don't collect your data. All data is stored locally in your browser. Full control over your information."
+    },
+    "slide6": {
+      "title": "Open source",
+      "description": "Skye is an open source project. We do everything openly and transparently. Found a bug or have an idea? Create an issue on GitHub, and we will definitely consider it!"
+    },
+    "navigation": {
+      "back": "Back",
+      "next": "Next",
+      "start": "Start",
+      "skip": "Skip tutorial"
+    }
+  },
+  "user": {
+    "menu": {
+      "lightTheme": "Light theme",
+      "darkTheme": "Dark theme",
+      "tutorial": "Take tutorial",
+      "logout": "Logout",
+      "language": "Language"
+    }
+  },
+  "colors": {
+    "accentColor": "Accent color",
+    "brand": "Brand",
+    "blue": "Blue",
+    "purple": "Purple",
+    "green": "Green",
+    "orange": "Orange",
+    "red": "Red",
+    "pink": "Pink",
+    "cyan": "Cyan"
+  },
+  "error": {
+    "tryAgain": "Try to authorize again or contact support"
+  },
+  "aria": {
+    "goToSlide": "Go to slide"
+  }
+}
+

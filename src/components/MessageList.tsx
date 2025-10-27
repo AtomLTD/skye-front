@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Message as MessageType } from '@/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
@@ -15,6 +16,7 @@ interface MessageListProps {
 }
 
 export function MessageList({ messages, loading, showWelcomeMessage = true, onSendMessage, messagesLoading, onRegenerateMessage }: MessageListProps) {
+  const { t } = useTranslation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -45,9 +47,9 @@ export function MessageList({ messages, loading, showWelcomeMessage = true, onSe
       <div className="flex flex-1 items-center justify-center p-4">
         <div className="text-center space-y-6 w-full max-w-2xl">
           <div className="space-y-2">
-            <h3 className="text-2xl font-bold">Привет!</h3>
+            <h3 className="text-2xl font-bold">{t('chat.welcome.title')}</h3>
             <p className="text-muted-foreground">
-              Начните диалог, отправив сообщение ниже
+              {t('chat.welcome.description')}
             </p>
           </div>
           {onSendMessage && (
