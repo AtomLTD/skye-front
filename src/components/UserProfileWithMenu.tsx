@@ -1,17 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Moon, Sun, LogOut, User, ChevronUp } from 'lucide-react';
+import { Moon, Sun, LogOut, User, ChevronUp, RotateCcw } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/components/ui/theme-provider';
 import { ColorPicker } from './ColorPicker';
+import { useOnboarding } from '@/hooks/useOnboarding';
 
 export function UserProfileWithMenu() {
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-
+  const { resetOnboarding } = useOnboarding();
+  
   // Закрытие меню при клике вне его области
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -84,7 +86,8 @@ export function UserProfileWithMenu() {
       {/* Контекстное меню */}
       {isMenuOpen && (
         <div className="absolute bottom-full left-0 right-0 bg-background border border-border rounded-md shadow-lg mb-2">
-          <div className="p-3 space-y-2">
+          <div className="p-3 space-y-4">
+
             <ColorPicker />
             <Button
               variant="ghost"
@@ -103,6 +106,12 @@ export function UserProfileWithMenu() {
                   Темная тема
                 </>
               )}
+            </Button>
+            <Button variant='ghost' size='default' onClick={resetOnboarding} className='w-full justify-start h-10'>
+              <RotateCcw 
+                className="mr-3 h-4 w-4"
+              />
+              Пройти обучение
             </Button>
             <Button
               variant="ghost"

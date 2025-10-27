@@ -27,6 +27,7 @@ export function useOnboarding() {
 
   const resetOnboarding = () => {
     localStorage.removeItem(ONBOARDING_STORAGE_KEY);
+    window.location.reload();
     setShowOnboarding(true);
   };
 
