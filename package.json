@@ -7,7 +7,8 @@
     "dev": "vite --host",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "full": "(npm run lint; tsc --noEmit; npm run build) 2>&1 | tee builds.log"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",
