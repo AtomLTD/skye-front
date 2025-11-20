@@ -29,17 +29,14 @@ function ChatPageContent() {
   const { messages, loading: messagesLoading, isGenerating, sendMessage, stopGeneration, regenerateMessage } = useMessages(selectedChatId);
   const { showOnboarding, completeOnboarding, skipOnboarding } = useOnboarding();
 
-  // Отслеживаем, был ли чат только что создан для автоматического переименования
   const [newChatId, setNewChatId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Проверяем, если у нового чата появилось первое сообщение от пользователя
     if (newChatId) {
       const chatMessages = getChatMessages(newChatId);
       const hasUserMessage = chatMessages.some(m => m.role === 'user');
       
       if (hasUserMessage) {
-        // Запускаем автоматическое переименование
         autoRenameChat(newChatId);
         setNewChatId(null);
       }
@@ -71,11 +68,9 @@ function ChatPageContent() {
 
   const handleSendMessage = (content: string) => {
     if (!selectedChatId) {
-      // Создаем новый чат, если не выбран
       const newChat = createChat(t('chat.newChat'));
       setSelectedChatId(newChat.id);
       setNewChatId(newChat.id);
-      // Отправляем сообщение сразу в новый чат
       sendMessage(content, newChat.id);
     } else {
       sendMessage(content);
@@ -95,13 +90,13 @@ function ChatPageContent() {
         />
       )}
       
-      <Sidebar variant='floating'>
-        <SidebarHeader>
-          <div className="flex items-center justify-between px-2">
-            <h1 className="text-xl font-bold">{t('app.name')}</h1>
+      <Sidebar variant="inset" className="border-r border-border/40 bg-sidebar/50 backdrop-blur-xl">
+        <SidebarHeader className="pb-4 pt-6 px-4">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-heading font-bold tracking-tight text-foreground">{t('app.name')}</h1>
           </div>
         </SidebarHeader>
-        <SidebarContent>
+        <SidebarContent className="px-2">
           <ChatList
             chats={chats}
             loading={chatsLoading}
@@ -112,45 +107,48 @@ function ChatPageContent() {
             onDeleteChat={handleDeleteChat}
           />
         </SidebarContent>
-        <SidebarFooter>
+        <SidebarFooter className="p-4 pb-6">
           <UserProfileWithMenu />
         </SidebarFooter>
       </Sidebar>
 
-      <main className="flex flex-1 flex-col max-w-2xl mx-auto relative">
-        {/* Единый хедер для всех устройств */}
-        <div className="flex items-center gap-2 p-3">
-          <Button variant="ghost" size="icon" onClick={toggleSidebar}>
-            <PanelLeft className="h-5 w-5" />
+      <main className="flex flex-1 flex-col relative bg-background w-full h-full overflow-hidden transition-all duration-300 ease-in-out">
+        {/* Header */}
+        <header className="flex items-center gap-4 p-4 h-16 border-b border-border/40 bg-background/80 backdrop-blur-sm z-10 sticky top-0 w-full">
+          <Button variant="ghost" size="icon" onClick={toggleSidebar} className="hover:bg-accent/50">
+            <PanelLeft className="h-5 w-5 text-muted-foreground" />
           </Button>
-          {messages.length > 0 && (
-            <h2 className="text-lg font-semibold">
-              {selectedChatId
-                ? chats.find(c => c.id === selectedChatId)?.title || t('chat.title')
-                : t('chat.newChat')}
-            </h2>
-          )}
+          <h2 className="text-lg font-heading font-semibold truncate text-foreground/90">
+            {selectedChatId
+              ? chats.find(c => c.id === selectedChatId)?.title || t('chat.title')
+              : t('chat.newChat')}
+          </h2>
+        </header>
+
+        {/* Chat Area */}
+        <div className="flex-1 flex flex-col w-full max-w-4xl mx-auto h-[calc(100vh-4rem)] relative">
+          <div className="flex-1 overflow-hidden flex flex-col relative">
+             <MessageList 
+                messages={messages} 
+                loading={messagesLoading}
+                showWelcomeMessage={messages.length === 0}
+                onSendMessage={handleSendMessage}
+                messagesLoading={messagesLoading}
+                onRegenerateMessage={regenerateMessage}
+              />
+          </div>
+
+          {/* Input Area */}
+          <div className="w-full p-4 pb-6 md:pb-8">
+             <MessageInput 
+                onSend={handleSendMessage}
+                onStop={handleStopGeneration}
+                disabled={messagesLoading}
+                hasMessages={messages.length > 0}
+                isGenerating={isGenerating}
+              />
+          </div>
         </div>
-
-        <MessageList 
-          messages={messages} 
-          loading={messagesLoading}
-          showWelcomeMessage={messages.length === 0}
-          onSendMessage={handleSendMessage}
-          messagesLoading={messagesLoading}
-          onRegenerateMessage={regenerateMessage}
-        />
-
-        {/* Когда есть сообщения - показываем поле ввода снизу */}
-        {messages.length > 0 && (
-          <MessageInput 
-            onSend={handleSendMessage}
-            onStop={handleStopGeneration}
-            disabled={messagesLoading}
-            hasMessages={true}
-            isGenerating={isGenerating}
-          />
-        )}
       </main>
     </>
   );
@@ -160,7 +158,7 @@ export default function ChatPage() {
   return (
     <AuthGuard>
       <SidebarProvider defaultOpen={true}>
-        <div className="flex h-screen w-full">
+        <div className="flex h-screen w-full bg-background text-foreground overflow-hidden">
           <ChatPageContent />
         </div>
       </SidebarProvider>

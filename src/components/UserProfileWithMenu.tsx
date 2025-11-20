@@ -88,7 +88,7 @@ export function UserProfileWithMenu() {
 
       {/* Контекстное меню */}
       {isMenuOpen && (
-        <div className="absolute bottom-full left-0 right-0 bg-background border border-border rounded-md shadow-lg mb-2">
+        <div className="absolute bottom-full left-0 right-0 bg-background/95 backdrop-blur-sm border border-border rounded-md shadow-lg mb-2 z-50">
           <div className="p-3 space-y-2">
 
             <ColorPicker />

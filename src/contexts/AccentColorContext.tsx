@@ -103,6 +103,32 @@ export function AccentColorProvider({ children }: { children: ReactNode }) {
     // Устанавливаем основной акцентный цвет
     root.style.setProperty('--brand', isDark ? palette.dark : palette.light);
     root.style.setProperty('--brand-foreground', 'oklch(0.985 0 0)');
+    
+    // Обновляем цвета кольца фокуса и бордеров, чтобы они соответствовали акценту
+    root.style.setProperty('--ring', isDark ? palette.dark : palette.light);
+    root.style.setProperty('--sidebar-ring', isDark ? palette.dark : palette.light);
+    root.style.setProperty('--sidebar-primary', isDark ? palette.dark : palette.light);
+
+    // Обновляем глобальный акцент, чтобы все элементы (включая контекстные меню) использовали правильный цвет
+    root.style.setProperty('--accent', isDark ? palette.darkMessage : palette.lightMessage); // Легкий фон для hover
+    root.style.setProperty('--accent-foreground', isDark ? palette.darkMessageText : palette.lightMessageText);
+    
+    // Адаптируем фон сайдбара под оттенок акцента (очень легкий тинт)
+    // Извлекаем Hue из цвета акцента (предполагаем формат oklch(L C H ...))
+    const hueMatch = palette.light.match(/oklch\([^)]+\s(\d+(?:\.\d+)?)\)/);
+    const hue = hueMatch ? hueMatch[1] : '210'; // 210 fallback
+    
+    if (isDark) {
+        // Темная тема: темный фон с легким оттенком
+        root.style.setProperty('--sidebar', `oklch(0.14 0.01 ${hue})`);
+        root.style.setProperty('--sidebar-border', `oklch(0.25 0.02 ${hue})`);
+        root.style.setProperty('--sidebar-accent', `oklch(0.2 0.02 ${hue})`);
+    } else {
+        // Светлая тема: светлый фон с легким оттенком
+        root.style.setProperty('--sidebar', `oklch(0.985 0.005 ${hue})`);
+        root.style.setProperty('--sidebar-border', `oklch(0.92 0.01 ${hue})`);
+        root.style.setProperty('--sidebar-accent', `oklch(0.95 0.01 ${hue})`);
+    }
 
     // Устанавливаем цвета для сообщений
     root.style.setProperty('--brand-message', isDark ? palette.darkMessage : palette.lightMessage);
@@ -119,6 +145,28 @@ export function AccentColorProvider({ children }: { children: ReactNode }) {
       root.style.setProperty('--brand', isDark ? palette.dark : palette.light);
       root.style.setProperty('--brand-message', isDark ? palette.darkMessage : palette.lightMessage);
       root.style.setProperty('--brand-message-text', isDark ? palette.darkMessageText : palette.lightMessageText);
+      
+      // Update dynamic accent props
+      root.style.setProperty('--ring', isDark ? palette.dark : palette.light);
+      root.style.setProperty('--sidebar-ring', isDark ? palette.dark : palette.light);
+      root.style.setProperty('--sidebar-primary', isDark ? palette.dark : palette.light);
+      
+      // Update global accent
+      root.style.setProperty('--accent', isDark ? palette.darkMessage : palette.lightMessage);
+      root.style.setProperty('--accent-foreground', isDark ? palette.darkMessageText : palette.lightMessageText);
+
+      const hueMatch = palette.light.match(/oklch\([^)]+\s(\d+(?:\.\d+)?)\)/);
+      const hue = hueMatch ? hueMatch[1] : '210';
+      
+      if (isDark) {
+          root.style.setProperty('--sidebar', `oklch(0.14 0.01 ${hue})`);
+          root.style.setProperty('--sidebar-border', `oklch(0.25 0.02 ${hue})`);
+          root.style.setProperty('--sidebar-accent', `oklch(0.2 0.02 ${hue})`);
+      } else {
+          root.style.setProperty('--sidebar', `oklch(0.985 0.005 ${hue})`);
+          root.style.setProperty('--sidebar-border', `oklch(0.92 0.01 ${hue})`);
+          root.style.setProperty('--sidebar-accent', `oklch(0.95 0.01 ${hue})`);
+      }
     });
 
     observer.observe(root, {
