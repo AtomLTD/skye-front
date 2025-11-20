@@ -10,12 +10,10 @@ interface MessageListProps {
   messages: MessageType[];
   loading: boolean;
   showWelcomeMessage?: boolean;
-  onSendMessage?: (message: string) => void;
-  messagesLoading?: boolean;
   onRegenerateMessage?: (messageId: string) => void;
 }
 
-export function MessageList({ messages, loading, showWelcomeMessage = true, onSendMessage, messagesLoading, onRegenerateMessage }: MessageListProps) {
+export function MessageList({ messages, loading, showWelcomeMessage = true, onRegenerateMessage }: MessageListProps) {
   const { t } = useTranslation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 

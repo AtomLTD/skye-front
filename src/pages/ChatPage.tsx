@@ -132,8 +132,6 @@ function ChatPageContent() {
                 messages={messages} 
                 loading={messagesLoading}
                 showWelcomeMessage={messages.length === 0}
-                onSendMessage={handleSendMessage}
-                messagesLoading={messagesLoading}
                 onRegenerateMessage={regenerateMessage}
               />
           </div>
